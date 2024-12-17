@@ -55,5 +55,7 @@
 
         public string change2 { get; set; }
 
+        public string change3 { get; set; }
+
     }
 }
