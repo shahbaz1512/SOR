@@ -50,5 +50,7 @@
         public string CreatedBy { get; set; }
         public string AuthorisedBy { get; set; }
         public string ModifiedBy { get; set; }
+
+        public string change { get; set; }
     }
 }
