@@ -34,8 +34,6 @@
         public int? MonthlyCount { get; set; }
         public int? YearlyCount { get; set; }
         public decimal? Limit { get; set; }
-
-        // Geolocation and PM Information
         public string PmIpAddress { get; set; }
         public int? PmPort { get; set; }
         public string PmUrl { get; set; }
