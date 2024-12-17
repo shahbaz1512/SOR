@@ -52,5 +52,8 @@
         public string ModifiedBy { get; set; }
 
         public string change { get; set; }
+
+        public string change2 { get; set; }
+
     }
 }
