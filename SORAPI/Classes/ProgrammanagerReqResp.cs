@@ -45,14 +45,10 @@
         // Authorization and Status
         public bool IsAuthorization { get; set; }
         public string Remarks { get; set; }
-
-        // Audit Information
         public string CreatedBy { get; set; }
         public string AuthorisedBy { get; set; }
         public string ModifiedBy { get; set; }
-
         public string change { get; set; }
-
         public string change2 { get; set; }
         public string change3 { get; set; }
     }
