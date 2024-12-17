@@ -39,8 +39,6 @@
         public string PmUrl { get; set; }
         public string PmLocation { get; set; }
         public string GeoLocation { get; set; }
-
-        // Authorization and Status
         public bool IsAuthorization { get; set; }
         public string Remarks { get; set; }
         public string CreatedBy { get; set; }
