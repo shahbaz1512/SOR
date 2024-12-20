@@ -18,14 +18,17 @@ namespace SORAPI.Controllers
         private readonly ProcessSyncTransactionInterface _ProcessAsyncTransactionInterface;
         private readonly Datavalidator _datavalidator;
         private readonly TransactionRecords _transactionRecords;
-        private readonly Commondetail _commondetail; 
+        private readonly Commondetail _commondetail;
+        private readonly Crypto _crypto;
+
         //  interface is injected dependency in controller
-        public Corporate(ProcessSyncTransactionInterface TransactionInterfaceInterface, Datavalidator datavalidator , TransactionRecords transactionRecords , Commondetail commondetail )  //////Constructor class  with dependncy injection  
+        public Corporate(ProcessSyncTransactionInterface TransactionInterfaceInterface, Datavalidator datavalidator , TransactionRecords transactionRecords , Commondetail commondetail , Crypto crypto)  //////Constructor class  with dependncy injection  
         {
             _ProcessAsyncTransactionInterface = TransactionInterfaceInterface ?? throw new ArgumentNullException(nameof(TransactionInterfaceInterface));
             _datavalidator = datavalidator ?? throw new ArgumentException(nameof(TransactionInterfaceInterface));
             _transactionRecords = transactionRecords ?? throw new ArgumentException(nameof(transactionRecords));
-            _commondetail = commondetail ?? throw new ArgumentException(nameof(Commondetail));  
+            _commondetail = commondetail ?? throw new ArgumentException(nameof(Commondetail));
+            _crypto = crypto ?? throw new ArgumentException(nameof(Crypto));
         }
         Request _request = new Request();
         Response _response = new Response();
@@ -40,6 +43,7 @@ namespace SORAPI.Controllers
                     Log.Information("Received an empty request body.");
                     return BadRequest("Invalid request body.");
                 }
+                requestBody = await _crypto.SSLEncrypt(requestBody);
                 _request = JsonConvert.DeserializeObject<Request>(requestBody);
                 Log.Information("partnerOnbaoard request received:  " + _request.Referencenumber);
                 _request.ACTION = "0";
@@ -75,7 +79,7 @@ namespace SORAPI.Controllers
                     Log.Information("Received an empty request body.");
                     return BadRequest("Invalid request body.");
                 }
-                requestBody = await _datavalidator.SSLEncrypt(requestBody);
+                requestBody = await _crypto.SSLEncrypt(requestBody);
                 _request = JsonConvert.DeserializeObject<Request>(requestBody);
                 _request.ACTION = "0";
                 await _transactionRecords.InsertTransactionRecords(_request, _response);
@@ -106,7 +110,7 @@ namespace SORAPI.Controllers
                     Log.Information("Received an empty request body.");
                     return BadRequest("Invalid request body.");
                 }
-                requestBody = await _datavalidator.SSLDecrypt(requestBody);
+                requestBody = await _crypto.SSLDecrypt(requestBody);
                 _request = JsonConvert.DeserializeObject<Request>(requestBody);
                 Log.Information("PartnerBlock request received: " + _request.Referencenumber);
                 _request.ACTION = "0";
@@ -137,7 +141,7 @@ namespace SORAPI.Controllers
                     Log.Information("Received an empty request body.");
                     return BadRequest("Invalid request body.");
                 }
-                requestBody = await _datavalidator.SSLDecrypt(requestBody);
+                requestBody = await _crypto.SSLDecrypt(requestBody);
                 _request = JsonConvert.DeserializeObject<Request>(requestBody);
                 Log.Information("PartnerUnblock request received: " + _request.Referencenumber);
                 _request.ACTION = "0";
@@ -163,7 +167,7 @@ namespace SORAPI.Controllers
             try
             {
                 var requestBody = await new StreamReader(Request.Body).ReadToEndAsync();
-                requestBody = await _datavalidator.SSLDecrypt(requestBody);
+                requestBody = await _crypto.SSLDecrypt(requestBody);
                 _request = JsonConvert.DeserializeObject<Request>(requestBody);
                 Log.Information("CheckPartnerLimit request received: " +  _request.Referencenumber);
                 _request.ACTION = "0";
@@ -189,7 +193,7 @@ namespace SORAPI.Controllers
             try
             {
                 var requestBody = await new StreamReader(Request.Body).ReadToEndAsync();
-                requestBody = await _datavalidator.SSLDecrypt(requestBody);
+                requestBody = await _crypto.SSLDecrypt(requestBody);
                 _request = JsonConvert.DeserializeObject<Request>(requestBody);
                 Log.Information("ReqAuth received: {RequestBody}", requestBody);
                  _datavalidator.DataValidators(enumTransactionType.ParttnerOnboard, _request);
@@ -209,7 +213,7 @@ namespace SORAPI.Controllers
             try
             {
                 var requestBody = await new StreamReader(Request.Body).ReadToEndAsync();
-                requestBody = await _datavalidator.SSLDecrypt(requestBody);
+                requestBody = await _crypto.SSLDecrypt(requestBody);
                 _request = JsonConvert.DeserializeObject<Request>(requestBody);
                 Log.Information("ReqAuth received: {RequestBody}", requestBody);
                  _datavalidator.DataValidators(enumTransactionType.ParttnerOnboard, _request);
@@ -229,7 +233,7 @@ namespace SORAPI.Controllers
             try
             {
                 var requestBody = await new StreamReader(Request.Body).ReadToEndAsync();
-                requestBody = await _datavalidator.SSLDecrypt(requestBody);
+                requestBody = await _crypto.SSLDecrypt(requestBody);
                 _request = JsonConvert.DeserializeObject<Request>(requestBody);
                 Log.Information("PartnerAuthorization received: {RequestBody}", requestBody);
                 _datavalidator.DataValidators(enumTransactionType.PartnerAuthorization, _request);
@@ -249,7 +253,7 @@ namespace SORAPI.Controllers
             try
             {
                 var requestBody = await new StreamReader(Request.Body).ReadToEndAsync();
-                requestBody = await _datavalidator.SSLDecrypt(requestBody);
+                requestBody = await _crypto.SSLDecrypt(requestBody);
                 _request = JsonConvert.DeserializeObject<Request>(requestBody);
                 Log.Information("ReqAuth received: {RequestBody}", requestBody);
                 _datavalidator.DataValidators(enumTransactionType.ParttnerOnboard, _request);

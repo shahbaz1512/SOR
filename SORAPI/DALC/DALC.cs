@@ -25,7 +25,10 @@ namespace SORAPI.DALC
         {
             _commondetail = commondetail;   
         }
-        Response _response = new Response();
+        Response _response = new();
+        TSPResponse _tspresponse = new();
+        ProgrammanagerResponse _pmresponse = new(); 
+        CustomerResponse _custresponse = new();
         public async Task<Response> InsertPartnerInformation(Request request)
         {
             string jsonString = string.Empty;
@@ -197,8 +200,125 @@ namespace SORAPI.DALC
             return _response;
         }
 
+        //TSP Transactions
 
+        public async Task<TSPResponse> InsertTSPRegistration(TSPRequest tsprequest)
+        {
+            string jsonString = string.Empty;
+            string notice = string.Empty;
+            var conn = new NpgsqlConnection(ConfigDb.Constring);
+            try
+            {
+                jsonString = JsonConvert.SerializeObject(tsprequest);
+                using (conn)
+                {
+                    conn.Notice += async (o, e) =>
+                    {
+                        //Console.WriteLine($"NOTICE: {e.Notice.MessageText}");
+                        _response.ResponseCode = e.Notice.MessageText;
+                    };
+                    await conn.OpenAsync();
+                    using (var cmd = new NpgsqlCommand("CALL partnerregistration(@jsonParam)", conn))
+                    {
+                        cmd.Parameters.AddWithValue("jsonParam", NpgsqlTypes.NpgsqlDbType.Jsonb, jsonString);
+                        await cmd.ExecuteNonQueryAsync();
+                        conn.CloseAsync();
+                        _response.ResponseCode = string.IsNullOrEmpty(_response.ResponseCode) ? await _commondetail.GetResponseCodeAsync(ConstResponseCode.Approved) : _response.ResponseCode;
+                        _response.ResponseDescription = await _commondetail.GetResponseCodeDescriptionAsync(_response.ResponseCode);
+                        tsprequest.ACTION = "1";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                conn.CloseAsync();
+                Log.Error($"Error: {ex.Message}");
+                _response.ResponseCode = await _commondetail.GetResponseCodeAsync(ConstResponseCode.UnableToProcess);
+                _response.ResponseDescription = await _commondetail.GetResponseCodeDescriptionAsync(_response.ResponseCode);
+                tsprequest.ACTION = "1";
+            }
+            return _tspresponse;
+        }
 
+        //PM Transactions
+
+        public async Task<ProgrammanagerResponse> InsertPMRegistration(ProgrammanagerRequest pmrequest)
+        {
+            string jsonString = string.Empty;
+            string notice = string.Empty;
+            var conn = new NpgsqlConnection(ConfigDb.Constring);
+            try
+            {
+                jsonString = JsonConvert.SerializeObject(pmrequest);
+                using (conn)
+                {
+                    conn.Notice += async (o, e) =>
+                    {
+                        //Console.WriteLine($"NOTICE: {e.Notice.MessageText}");
+                        _response.ResponseCode = e.Notice.MessageText;
+                    };
+                    await conn.OpenAsync();
+                    using (var cmd = new NpgsqlCommand("CALL partnerregistration(@jsonParam)", conn))
+                    {
+                        cmd.Parameters.AddWithValue("jsonParam", NpgsqlTypes.NpgsqlDbType.Jsonb, jsonString);
+                        await cmd.ExecuteNonQueryAsync();
+                        conn.CloseAsync();
+                        _response.ResponseCode = string.IsNullOrEmpty(_response.ResponseCode) ? await _commondetail.GetResponseCodeAsync(ConstResponseCode.Approved) : _response.ResponseCode;
+                        _response.ResponseDescription = await _commondetail.GetResponseCodeDescriptionAsync(_response.ResponseCode);
+                        pmrequest.ACTION = "1";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                conn.CloseAsync();
+                Log.Error($"Error: {ex.Message}");
+                _response.ResponseCode = await _commondetail.GetResponseCodeAsync(ConstResponseCode.UnableToProcess);
+                _response.ResponseDescription = await _commondetail.GetResponseCodeDescriptionAsync(_response.ResponseCode);
+                pmrequest.ACTION = "1";
+            }
+            return _pmresponse;
+        }
+
+        //Customer Transactions
+
+        public async Task<CustomerResponse> InsertCustomerRegistration(CustomerRequest pmrequest)
+        {
+            string jsonString = string.Empty;
+            string notice = string.Empty;
+            var conn = new NpgsqlConnection(ConfigDb.Constring);
+            try
+            {
+                jsonString = JsonConvert.SerializeObject(pmrequest);
+                using (conn)
+                {
+                    conn.Notice += async (o, e) =>
+                    {
+                        //Console.WriteLine($"NOTICE: {e.Notice.MessageText}");
+                        _response.ResponseCode = e.Notice.MessageText;
+                    };
+                    await conn.OpenAsync();
+                    using (var cmd = new NpgsqlCommand("CALL partnerregistration(@jsonParam)", conn))
+                    {
+                        cmd.Parameters.AddWithValue("jsonParam", NpgsqlTypes.NpgsqlDbType.Jsonb, jsonString);
+                        await cmd.ExecuteNonQueryAsync();
+                        conn.CloseAsync();
+                        _response.ResponseCode = string.IsNullOrEmpty(_response.ResponseCode) ? await _commondetail.GetResponseCodeAsync(ConstResponseCode.Approved) : _response.ResponseCode;
+                        _response.ResponseDescription = await _commondetail.GetResponseCodeDescriptionAsync(_response.ResponseCode);
+                        pmrequest.ACTION = "1";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                conn.CloseAsync();
+                Log.Error($"Error: {ex.Message}");
+                _response.ResponseCode = await _commondetail.GetResponseCodeAsync(ConstResponseCode.UnableToProcess);
+                _response.ResponseDescription = await _commondetail.GetResponseCodeDescriptionAsync(_response.ResponseCode);
+                pmrequest.ACTION = "1";
+            }
+            return _custresponse;
+        }
 
         // for transactions and transaction history
 
@@ -231,7 +351,97 @@ namespace SORAPI.DALC
             return _response;
         }
 
+        // TSP Transaction History
+        public async Task<TSPResponse> InsertTSPTransactionRecords(TSPRequest request, TSPResponse response)
+        {
+            string jsonreq = string.Empty;
+            string jsonresp = string.Empty;
+            var conn = new NpgsqlConnection(ConfigDb.Constring);
+            try
+            {
+                jsonreq = JsonConvert.SerializeObject(request);
+                jsonresp = JsonConvert.SerializeObject(response);
+                using (conn)
+                {
+                    await conn.OpenAsync();
+                    using (var cmd = new NpgsqlCommand("CALL insertupdatepartnertransactions(@jsonParam,@jsonParamresp)", conn))
+                    {
+                        cmd.Parameters.AddWithValue("jsonParam", NpgsqlTypes.NpgsqlDbType.Jsonb, jsonreq);
+                        cmd.Parameters.AddWithValue("jsonParamresp", NpgsqlTypes.NpgsqlDbType.Jsonb, jsonresp);
+                        await cmd.ExecuteNonQueryAsync();
+                        conn.CloseAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                conn.CloseAsync();
+                Log.Error($"Error: {ex.Message}");
+            }
+            return _tspresponse;
+        }
 
+        // program manager TRansaction History
+
+        public async Task<ProgrammanagerResponse> InsertPMTransactionRecords(ProgrammanagerRequest request, ProgrammanagerResponse response)
+        {
+            string jsonreq = string.Empty;
+            string jsonresp = string.Empty;
+            var conn = new NpgsqlConnection(ConfigDb.Constring);
+            try
+            {
+                jsonreq = JsonConvert.SerializeObject(request);
+                jsonresp = JsonConvert.SerializeObject(response);
+                using (conn)
+                {
+                    await conn.OpenAsync();
+                    using (var cmd = new NpgsqlCommand("CALL insertupdatepartnertransactions(@jsonParam,@jsonParamresp)", conn))
+                    {
+                        cmd.Parameters.AddWithValue("jsonParam", NpgsqlTypes.NpgsqlDbType.Jsonb, jsonreq);
+                        cmd.Parameters.AddWithValue("jsonParamresp", NpgsqlTypes.NpgsqlDbType.Jsonb, jsonresp);
+                        await cmd.ExecuteNonQueryAsync();
+                        conn.CloseAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                conn.CloseAsync();
+                Log.Error($"Error: {ex.Message}");
+            }
+            return _pmresponse;
+        }
+
+        // customer TRansaction History
+
+        public async Task<CustomerResponse> InsertCustomerTransactionRecords(CustomerRequest request, CustomerResponse response)
+        {
+            string jsonreq = string.Empty;
+            string jsonresp = string.Empty;
+            var conn = new NpgsqlConnection(ConfigDb.Constring);
+            try
+            {
+                jsonreq = JsonConvert.SerializeObject(request);
+                jsonresp = JsonConvert.SerializeObject(response);
+                using (conn)
+                {
+                    await conn.OpenAsync();
+                    using (var cmd = new NpgsqlCommand("CALL insertupdatepartnertransactions(@jsonParam,@jsonParamresp)", conn))
+                    {
+                        cmd.Parameters.AddWithValue("jsonParam", NpgsqlTypes.NpgsqlDbType.Jsonb, jsonreq);
+                        cmd.Parameters.AddWithValue("jsonParamresp", NpgsqlTypes.NpgsqlDbType.Jsonb, jsonresp);
+                        await cmd.ExecuteNonQueryAsync();
+                        conn.CloseAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                conn.CloseAsync();
+                Log.Error($"Error: {ex.Message}");
+            }
+            return _custresponse;
+        }
         public static DataTable SelectResponseCodes()
         {
             DataTable dt = new DataTable();

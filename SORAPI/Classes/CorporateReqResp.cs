@@ -1,6 +1,6 @@
 ﻿namespace SORAPI.Classes
 {
-    public class CorporateReqResp
+    public class CorporateRequest
     {
         // Basic Corporation Information
         public string CorpId { get; set; }
@@ -71,11 +71,20 @@
 
         // Remarks and Reserved Fields
         public string Remarks { get; set; }
-        public string ReserveFields1 { get; set; }
+        public string Referencenumber { get; set; }
         public string ReserveFields2 { get; set; }
         public string ReserveFields3 { get; set; }
         public string ReserveFields4 { get; set; }
         public string ReserveFields5 { get; set; }
+    }
+    public class CorporateResponse
+    {
+        public string ResponseCode { get; set; }
+        public string ResponseDescription { get; set; }
+        public string CorpId { get; set; }
+        public string CorpName { get; set; }
+        public decimal AvailableBalance { get; set; }
+
     }
 }
 

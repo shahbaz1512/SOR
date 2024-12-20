@@ -143,7 +143,35 @@
         PartnerValidation = 06,
         GetPartnerDetails = 07,
         UpdatePartnerDetails = 08,
-        PartnerTopUp = 09
+        PartnerTopUp = 09,
+        //TSP
+        TSPOnboard =10,
+        TSPAuthorization = 11,
+        CheckTSPLimit = 12,
+        TSPBlock = 13,
+        TSPUnblock = 14,
+        TSPValidation =15,
+        GetTSPDetails = 16,
+        UpdateTSPDetails = 17,
+        //PM
+        PMOnboard = 18,
+        PMAuthorization = 19,
+        CheckPMLimit = 20,
+        PMBlock = 21,
+        PMUnblock = 22,
+        PMValidation = 23,
+        GetPMDetails = 24,
+        UpdatePMDetails = 25,
+
+        //Customer
+        CustomerOnboard = 26,
+        CustomerAuthorization = 27,
+        CheckCustomerLimit = 28,
+        CustomerBlock = 29,
+        CustomerUnblock = 30,
+        CustomerValidation = 31,
+        GetCustomerDetails = 32,
+        UpdateCustomerDetails = 33,
     }
 
 }

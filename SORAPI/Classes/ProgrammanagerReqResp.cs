@@ -1,6 +1,6 @@
 ﻿namespace SORAPI.Classes
 {
-    public class ProgrammanagerReqResp
+    public class ProgrammanagerRequest
     {
         public string ProgramId { get; set; }
         public string ProgramName { get; set; }
@@ -44,8 +44,17 @@
         public string CreatedBy { get; set; }
         public string AuthorisedBy { get; set; }
         public string ModifiedBy { get; set; }
-        public string change { get; set; }
-        public string change2 { get; set; }
+        public string ReferenceNumber { get; set; }
+        public string ACTION { get; set; }
         public string change3 { get; set; }
+    }
+
+    public class ProgrammanagerResponse
+    {
+        public string ResponseCode { get; set; }
+        public string ResponseDescription { get; set; }
+        public string ProgramId { get; set; }
+        public string ProgramdetailsDetails { get; set; }
+
     }
 }

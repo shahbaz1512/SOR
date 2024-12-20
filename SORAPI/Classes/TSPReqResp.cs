@@ -1,6 +1,6 @@
 ﻿namespace SORAPI.Classes
 {
-    public class TSPReqResp
+    public class TSPRequest
     {
         // Basic TSP Information
         public string TspId { get; set; }
@@ -32,6 +32,8 @@
         public string PersonalIdentificationNumber { get; set; }
         public string AdditionalData { get; set; }
         public string CompanyName { get; set; }
+        public string ReferenceNumber { get; set; }
+        public string ACTION { get; set; }
 
         // Geographic Information
         public string Channels { get; set; }
@@ -79,5 +81,14 @@
 
         // Modification Details
         public string ModifiedBy { get; set; }
+    }
+    public class TSPResponse
+    {
+        public string ResponseCode { get; set; }
+        public string ResponseDescription { get; set; }
+        public string TSPId { get; set; }
+        public string TSPDetails { get; set; }
+        public decimal TSPLimit { get; set; }
+       
     }
 }

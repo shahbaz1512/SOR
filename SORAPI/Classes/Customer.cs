@@ -1,6 +1,6 @@
 ﻿namespace SORAPI.Classes
 {
-    public class Customer
+    public class CustomerRequest
     {
         // Basic Customer Information
         public string CustomerId { get; set; }
@@ -48,8 +48,8 @@
         public string ModifiedBy { get; set; }
 
         // Reserved Fields
-        public string Reserve1 { get; set; }
-        public string Reserve2 { get; set; }
+        public string ReferenceNumber { get; set; }
+        public string ACTION { get; set; }
         public string Reserve3 { get; set; }
         public string Reserve4 { get; set; }
 
@@ -126,4 +126,15 @@
         public string RelatedTransactions { get; set; }
         public bool NotifyCustomer { get; set; }
     }
+
+    public class CustomerResponse
+    {
+        public string ResponseCode { get; set; }
+        public string ResponseDescription { get; set; }
+        public string CorpId { get; set; }
+        public string CorpName { get; set; }
+        public decimal AvailableBalance { get; set; }
+
+    }
+
 }
